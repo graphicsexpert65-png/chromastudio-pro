@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Color Palette Generator – HEX, RGB, CMYK & HSL | ChromaStudio Pro</title>
+  <meta name="description" content="Create beautiful color palettes online for free. Generate color harmonies, explore shades and tints, check WCAG contrast, preview designs, and copy HEX, RGB, CMYK and HSL values." />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <meta name="theme-color" content="#0F172A" />
+  <meta name="author" content="ChromaStudio Pro" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ChromaStudio Pro" />
+  <meta property="og:title" content="Free Color Palette Generator – HEX, RGB, CMYK & HSL" />
+  <meta property="og:description" content="Generate color palettes, explore color harmonies, check contrast, and copy professional HEX, RGB, CMYK and HSL values." />
+  <meta property="og:locale" content="en_US" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Free Color Palette Generator | ChromaStudio Pro" />
+  <meta name="twitter:description" content="A free online color palette studio for designers. Generate palettes and get HEX, RGB, CMYK and HSL values." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230F172A'/%3E%3Ccircle cx='50' cy='50' r='31' fill='none' stroke='white' stroke-width='9'/%3E%3Cpath d='M50 19v31l22 22' stroke='%233B82F6' stroke-width='9' fill='none'/%3E%3C/svg%3E" />
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- jsPDF for direct client-side PDF sheet export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            navy: {
+              950: '#090E1A',
+              900: '#0F172A',
+              800: '#1E293B',
+              700: '#334155',
+              600: '#475569',
+            },
+            royal: {
+              600: '#1D4ED8',
+              700: '#1E40AF',
+              50: '#EFF6FF',
+              100: '#DBEAFE',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Minimal custom utility rules strictly for native color input overlay & smooth scrollbars */
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #FFFFFF;
+      color: #0F172A;
+      -webkit-font-smoothing: antialiased;
+    }
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F8FAFC;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
+    }
+    /* Swatch drag indicator */
+    .swatch-dragging {
+      opacity: 0.45;
+      transform: scale(0.98);
+    }
+    .swatch-drag-over {
+      box-shadow: inset 0 0 0 3px #1D4ED8;
+    }
+    /* Hide default color input styling while keeping it accessible */
+    input[type="color"] {
+      -webkit-appearance: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+    }
+    input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+    input[type="color"]::-webkit-color-swatch {
+      border: none;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body class="bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900">
+
+  <!-- ===================================================================== -->
+  <!-- TOP NAVIGATION HEADER                                                 -->
+  <!-- ===================================================================== -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <!-- Brand Identity -->
+      <div class="flex items-center gap-3 shrink-0">
+        <div class="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center shadow-sm">
+          <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M12 3v9l6.36 6.36"/>
+            <circle cx="12" cy="12" r="3" fill="#3B82F6" stroke="none"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-slate-900 tracking-tight text-base sm:text-lg">ChromaStudio</span>
+            <span class="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-slate-900 text-white">Pro</span>
+          </div>
+          <p class="hidden sm:block text-[11px] text-slate-500 leading-none">Color System & Design Workbench</p>
+        </div>
+      </div>
+
+      <!-- Section Navigation Links -->
+      <nav class="hidden xl:flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200/80">
+        <a href="#generator-section" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-700 hover:text-slate-950 hover:bg-white transition">Generator</a>
+        <a href="#harmony-section" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-700 hover:text-slate-950 hover:bg-white transition">Harmonies</a>
+        <a href="#shades-section" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-700 hover:text-slate-950 hover:bg-white transition">Shades & Tints</a>
+        <a href="#accessibility-section" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-700 hover:text-slate-950 hover:bg-white transition">Accessibility</a>
+        <a href="#mockups-section" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-700 hover:text-slate-950 hover:bg-white transition">Live Mockups</a>
+        <a href="#saved-section" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-700 hover:text-slate-950 hover:bg-white transition">Saved Palettes</a>
+      </nav>
+
+      <!-- Global Action Toolbar -->
+      <div class="flex items-center gap-2">
+        <button id="btn-header-generate" onclick="generatePalette()" title="Generate New Palette (Spacebar)"
+          class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 active:scale-[0.99] text-white text-xs sm:text-sm font-semibold shadow-sm transition cursor-pointer">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/>
+            <polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/>
+            <line x1="4" y1="4" x2="9" y2="9"/>
+          </svg>
+          <span>Generate</span>
+          <kbd class="hidden md:inline-block ml-1 px-1.5 py-0.5 text-[10px] font-mono bg-slate-800 text-slate-300 rounded border border-slate-700">Space</kbd>
+        </button>
+
+        <button onclick="addColorSwatch()" id="btn-header-add" title="Add Color Swatch (Max 10)"
+          class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 text-xs sm:text-sm font-semibold transition cursor-pointer">
+          <svg class="w-4 h-4 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          <span class="hidden sm:inline">Add</span>
+        </button>
+
+        <button onclick="openSaveModal()" title="Save Palette to Local Library"
+          class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 text-xs sm:text-sm font-semibold transition cursor-pointer">
+          <svg class="w-4 h-4 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span class="hidden md:inline">Save</span>
+        </button>
+
+        <button onclick="copyAllHex()" title="Copy All HEX Codes"
+          class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 text-xs sm:text-sm font-semibold transition cursor-pointer">
+          <svg class="w-4 h-4 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          <span class="hidden lg:inline">Copy All</span>
+        </button>
+
+        <button onclick="openExportModal()"
+          class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white text-xs sm:text-sm font-semibold shadow-sm transition cursor-pointer">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          <span>Export</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile / Tablet Quick Sub-Nav -->
+    <div class="xl:hidden border-t border-slate-100 bg-slate-50/80 px-4 py-2 overflow-x-auto flex items-center gap-2">
+      <a href="#generator-section" class="shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-700 bg-white border border-slate-200">Generator</a>
+      <a href="#harmony-section" class="shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-700 bg-white border border-slate-200">Harmonies</a>
+      <a href="#shades-section" class="shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-700 bg-white border border-slate-200">Shades & Tints</a>
+      <a href="#accessibility-section" class="shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-700 bg-white border border-slate-200">Accessibility</a>
+      <a href="#mockups-section" class="shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-700 bg-white border border-slate-200">Live Mockups</a>
+      <a href="#saved-section" class="shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-700 bg-white border border-slate-200">Saved Palettes</a>
+    </div>
+  </header>
+
+  <!-- ===================================================================== -->
+  <!-- MAIN WORKSPACE CONTAINER                                              -->
+  <!-- ===================================================================== -->
+  <main class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-12">
+    <section aria-labelledby="intro-title" class="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-5 sm:p-7 space-y-2">
+      <p class="text-xs font-bold uppercase tracking-wider text-blue-700">Free online design tool</p>
+      <h1 id="intro-title" class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">Free Color Palette Generator for Digital & Print Design</h1>
+      <p class="max-w-4xl text-sm sm:text-base leading-7 text-slate-600">Create coordinated color palettes in seconds with ChromaStudio Pro. Generate color combinations, explore color theory, adjust shades and tints, test text contrast, and copy accurate HEX, RGB, CMYK and HSL values for your creative projects.</p>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- 1. MAIN COLOR PALETTE GENERATOR                                     -->
+    <!-- =================================================================== -->
+    <section id="generator-section" class="scroll-mt-24 space-y-4">
+      <!-- Section Subheader & Controls -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <div class="flex items-center gap-2.5">
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Palette Studio</h2>
+            <span id="swatch-count-badge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">5 Colors</span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Click any swatch to pick a color, edit HEX directly, lock favorites, or press <span class="font-semibold text-slate-700">Spacebar</span> to shuffle.</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Generation Style Selector -->
+          <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5">
+            <label for="generation-mode" class="text-xs font-semibold text-slate-600">Algorithm:</label>
+            <select id="generation-mode" class="bg-transparent text-xs font-bold text-slate-900 focus:outline-none cursor-pointer">
+              <option value="smart">Curated Harmonic</option>
+              <option value="vibrant">Modern UI & Brand</option>
+              <option value="pastel">Soft Editorial Pastel</option>
+              <option value="deep">Deep Navy & Jewel</option>
+              <option value="random">Pure Random</option>
+            </select>
+          </div>
+
+          <button onclick="unlockAllSwatches()" class="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 transition cursor-pointer">
+            Unlock All
+          </button>
+          <button onclick="reversePalette()" class="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 transition cursor-pointer" title="Reverse Swatch Order">
+            Reverse Order
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Interactive Swatch Canvas -->
+      <div id="palette-canvas" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 min-h-[380px] lg:min-h-[430px]">
+        <!-- Swatches dynamically rendered by JS -->
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- 2. COLOR HARMONY GENERATOR                                          -->
+    <!-- =================================================================== -->
+    <section id="harmony-section" class="scroll-mt-24 bg-slate-50/70 border border-slate-200 rounded-2xl p-5 sm:p-7 space-y-6">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-blue-700">Color Theory Engine</span>
+          <h2 class="text-lg sm:text-xl font-bold text-slate-900 mt-0.5">Color Harmony Generator</h2>
+          <p class="text-xs sm:text-sm text-slate-500">Select a base color and mathematical harmony rule to build balanced color relationships.</p>
+        </div>
+
+        <!-- Base Color Picker + Apply Button -->
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="flex items-center gap-2.5 bg-white border border-slate-200 rounded-xl px-3 py-2 shadow-xs">
+            <label for="harmony-base-picker" class="text-xs font-semibold text-slate-600">Base Color:</label>
+            <input type="color" id="harmony-base-picker" value="#1D4ED8" class="w-7 h-7 rounded-lg border border-slate-200 cursor-pointer" />
+            <input type="text" id="harmony-base-hex" value="#1D4ED8" maxlength="7"
+              class="w-20 font-mono-code text-xs font-bold uppercase text-slate-900 bg-slate-50 px-2 py-1 rounded-lg border border-slate-200 focus:outline-none focus:border-blue-600" />
+          </div>
+
+          <button onclick="applyHarmonyToMain()"
+            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold shadow-xs transition cursor-pointer">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <span>Apply Harmony to Palette</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Harmony Rule Tabs -->
+      <div class="flex flex-wrap items-center gap-2" id="harmony-mode-tabs">
+        <button data-harmony="complementary" onclick="setHarmonyMode('complementary')" class="harmony-tab px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer bg-slate-900 text-white">Complementary</button>
+        <button data-harmony="analogous" onclick="setHarmonyMode('analogous')" class="harmony-tab px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer bg-white text-slate-700 border border-slate-200 hover:bg-slate-100">Analogous</button>
+        <button data-harmony="triadic" onclick="setHarmonyMode('triadic')" class="harmony-tab px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer bg-white text-slate-700 border border-slate-200 hover:bg-slate-100">Triadic</button>
+        <button data-harmony="split-complementary" onclick="setHarmonyMode('split-complementary')" class="harmony-tab px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer bg-white text-slate-700 border border-slate-200 hover:bg-slate-100">Split Complementary</button>
+        <button data-harmony="tetradic" onclick="setHarmonyMode('tetradic')" class="harmony-tab px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer bg-white text-slate-700 border border-slate-200 hover:bg-slate-100">Tetradic</button>
+        <button data-harmony="monochromatic" onclick="setHarmonyMode('monochromatic')" class="harmony-tab px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer bg-white text-slate-700 border border-slate-200 hover:bg-slate-100">Monochromatic</button>
+      </div>
+
+      <!-- Harmony Swatches + Color Wheel Visualizer -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+        <!-- SVG Color Wheel Visualization -->
+        <div class="lg:col-span-4 flex flex-col items-center justify-center bg-white border border-slate-200 rounded-2xl p-5">
+          <div class="relative w-48 h-48 flex items-center justify-center">
+            <svg id="harmony-wheel-svg" viewBox="0 0 200 200" class="w-full h-full overflow-visible">
+              <!-- Conic-like segmented hue ring rendered by JS -->
+            </svg>
+          </div>
+          <p id="harmony-description" class="text-xs text-slate-500 text-center mt-3 max-w-xs">
+            High-contrast pairing of colors located directly opposite each other (180°) on the color wheel.
+          </p>
+        </div>
+
+        <!-- Generated Harmony Swatch Cards -->
+        <div id="harmony-swatches-grid" class="lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- 3. COLOR SHADES, TINTS & GRADIENT STUDIO                            -->
+    <!-- =================================================================== -->
+    <section id="shades-section" class="scroll-mt-24 bg-white border border-slate-200 rounded-2xl p-5 sm:p-7 space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-blue-700">Tonal Scale & Gradients</span>
+          <h2 class="text-lg sm:text-xl font-bold text-slate-900 mt-0.5">Shades, Tints & Smooth Gradients</h2>
+          <p class="text-xs sm:text-sm text-slate-500">Inspect 10% to 100% lighter tints and darker shades for any palette swatch. Click any step to copy HEX.</p>
+        </div>
+
+        <!-- Quick Swatch Selector Pills -->
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-xs font-semibold text-slate-600 mr-1">Inspect Color:</span>
+          <div id="shades-palette-pills" class="flex items-center gap-1.5 flex-wrap">
+            <!-- Dynamically populated pills from active palette -->
+          </div>
+          <input type="color" id="shades-custom-picker" title="Pick Custom Color to Inspect" class="w-8 h-8 rounded-lg border border-slate-200 cursor-pointer ml-1" />
+        </div>
+      </div>
+
+      <!-- Lighter Tints Scale (10% to 100%) -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Lighter Tints (Mixed with Pure White — 10% to 100%)</h3>
+          <span id="shades-active-label" class="font-mono-code text-xs font-semibold text-slate-500">#1D4ED8</span>
+        </div>
+        <div id="tints-scale-grid" class="grid grid-cols-5 sm:grid-cols-10 gap-2">
+          <!-- 10 steps rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Darker Shades Scale (10% to 100%) -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Darker Shades (Mixed with Deep Black — 10% to 100%)</h3>
+          <span class="text-xs text-slate-400">Click swatch to copy</span>
+        </div>
+        <div id="shades-scale-grid" class="grid grid-cols-5 sm:grid-cols-10 gap-2">
+          <!-- 10 steps rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Smooth Palette Gradient Studio -->
+      <div class="pt-3 border-t border-slate-100 space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">Smooth Palette Gradient</h3>
+            <p class="text-xs text-slate-500">Multi-stop linear gradient generated seamlessly across your active palette.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <select id="gradient-angle" onchange="renderGradientPreview()" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-800 focus:outline-none cursor-pointer">
+              <option value="90deg">90° Horizontal</option>
+              <option value="135deg" selected>135° Diagonal</option>
+              <option value="180deg">180° Vertical</option>
+              <option value="45deg">45° Ascending</option>
+            </select>
+            <button onclick="copyGradientCSS()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition cursor-pointer">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <span>Copy Gradient CSS</span>
+            </button>
+          </div>
+        </div>
+        <div id="palette-gradient-bar" class="h-20 sm:h-24 w-full rounded-2xl border border-slate-200 shadow-inner transition-all duration-300"></div>
+        <code id="palette-gradient-code" class="block font-mono-code text-xs bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-700 overflow-x-auto"></code>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- 4. WCAG COLOR ACCESSIBILITY & CONTRAST CHECKER                      -->
+    <!-- =================================================================== -->
+    <section id="accessibility-section" class="scroll-mt-24 bg-slate-50/70 border border-slate-200 rounded-2xl p-5 sm:p-7 space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-blue-700">WCAG 2.1 Compliance</span>
+          <h2 class="text-lg sm:text-xl font-bold text-slate-900 mt-0.5">Color Accessibility & Contrast Checker</h2>
+          <p class="text-xs sm:text-sm text-slate-500">Test foreground text against background surfaces for AA and AAA legibility standards.</p>
+        </div>
+        <button onclick="autoPickAccessiblePair()" class="self-start sm:self-auto px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-800 transition cursor-pointer">
+          Find Best Palette Pair
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        <!-- Controls & Ratio Score (Left 5 Cols) -->
+        <div class="lg:col-span-5 bg-white border border-slate-200 rounded-2xl p-5 flex flex-col justify-between space-y-5">
+          <div class="space-y-4">
+            <!-- Foreground Selector -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">Foreground (Text Color)</label>
+              <div class="flex items-center gap-2">
+                <input type="color" id="contrast-fg-picker" value="#0F172A" class="w-10 h-10 rounded-xl border border-slate-200 shrink-0 cursor-pointer" />
+                <select id="contrast-fg-select" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-mono-code font-semibold text-slate-900 focus:outline-none">
+                  <!-- Populated from palette + custom -->
+                </select>
+              </div>
+            </div>
+
+            <!-- Swap Button -->
+            <div class="flex justify-center">
+              <button onclick="swapContrastColors()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition cursor-pointer">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                <span>Swap Foreground & Background</span>
+              </button>
+            </div>
+
+            <!-- Background Selector -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">Background (Surface Color)</label>
+              <div class="flex items-center gap-2">
+                <input type="color" id="contrast-bg-picker" value="#FFFFFF" class="w-10 h-10 rounded-xl border border-slate-200 shrink-0 cursor-pointer" />
+                <select id="contrast-bg-select" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-mono-code font-semibold text-slate-900 focus:outline-none">
+                  <!-- Populated from palette + custom -->
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contrast Ratio & WCAG Badges -->
+          <div class="pt-4 border-t border-slate-100 space-y-3">
+            <div class="flex items-baseline justify-between">
+              <span class="text-xs font-semibold text-slate-500">Contrast Ratio</span>
+              <div class="flex items-baseline gap-2">
+                <span id="contrast-ratio-value" class="text-3xl font-extrabold font-mono-code text-slate-900">17.91:1</span>
+                <span id="contrast-rating-tag" class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-100 text-emerald-800">Excellent</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5">
+              <div class="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-50 border border-slate-200">
+                <span class="text-xs font-semibold text-slate-700">AA Normal (4.5:1)</span>
+                <span id="badge-aa-normal" class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-600 text-white">PASS</span>
+              </div>
+              <div class="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-50 border border-slate-200">
+                <span class="text-xs font-semibold text-slate-700">AA Large (3.0:1)</span>
+                <span id="badge-aa-large" class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-600 text-white">PASS</span>
+              </div>
+              <div class="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-50 border border-slate-200">
+                <span class="text-xs font-semibold text-slate-700">AAA Normal (7.0:1)</span>
+                <span id="badge-aaa-normal" class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-600 text-white">PASS</span>
+              </div>
+              <div class="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-50 border border-slate-200">
+                <span class="text-xs font-semibold text-slate-700">AAA Large (4.5:1)</span>
+                <span id="badge-aaa-large" class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-600 text-white">PASS</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Typography Readability Preview (Right 7 Cols) -->
+        <div id="contrast-preview-box" class="lg:col-span-7 rounded-2xl border border-slate-200 p-6 sm:p-8 flex flex-col justify-between transition-colors duration-200" style="background-color: #FFFFFF; color: #0F172A;">
+          <div class="space-y-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold border border-current/25">
+              <span>LIVE READABILITY SPECIMEN</span>
+            </div>
+            <h3 class="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight">
+              Designing interfaces with clarity, contrast, and visual hierarchy.
+            </h3>
+            <p class="text-sm sm:text-base leading-relaxed opacity-90">
+              Good color contrast ensures that every user—including people with low vision or color deficiencies—can effortlessly read body copy, form labels, and interactive controls across desktop and mobile displays.
+            </p>
+          </div>
+
+          <div class="pt-6 mt-6 border-t border-current/15 flex flex-wrap items-center justify-between gap-4">
+            <div class="text-xs font-mono-code opacity-80">
+              16px Regular Body • 28px Bold Heading
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-1.5 rounded-lg text-xs font-bold border border-current">Outline Action</span>
+              <span id="contrast-preview-pill" class="px-3.5 py-1.5 rounded-lg text-xs font-bold" style="background-color: #0F172A; color: #FFFFFF;">Primary Button</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- 5. REAL-TIME DESIGN PREVIEWS (LIVE MOCKUPS)                         -->
+    <!-- =================================================================== -->
+    <section id="mockups-section" class="scroll-mt-24 space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-blue-700">In-Context Visualization</span>
+          <h2 class="text-xl sm:text-2xl font-bold text-slate-900 mt-0.5">Real-Time Design Previews</h2>
+          <p class="text-xs sm:text-sm text-slate-500">See your active palette applied live across web interfaces, UI components, typography, social posts, and print posters.</p>
+        </div>
+
+        <button onclick="shuffleMockupRoles()" class="self-start sm:self-auto inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold shadow-xs transition cursor-pointer">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+          <span>Shuffle Color Roles</span>
+        </button>
+      </div>
+
+      <!-- Mockups Bento Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- A. Website UI Mockup (7 cols) -->
+        <div class="lg:col-span-7 bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs flex flex-col">
+          <div class="px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
+              <span class="ml-2 text-[11px] font-semibold text-slate-500">Website Landing UI Mockup</span>
+            </div>
+            <span class="text-[11px] font-mono-code text-slate-400">1440px Desktop</span>
+          </div>
+          <div id="mockup-website" class="p-6 sm:p-8 flex-1 flex flex-col justify-between transition-colors duration-300">
+            <!-- Mock Navbar -->
+            <div class="flex items-center justify-between pb-6 border-b border-current/10">
+              <div class="flex items-center gap-2 font-extrabold text-base tracking-tight">
+                <span id="mock-web-logo-dot" class="w-3.5 h-3.5 rounded-sm inline-block"></span>
+                <span>NordicGrid</span>
+              </div>
+              <div class="hidden sm:flex items-center gap-5 text-xs font-medium opacity-80">
+                <span>Platform</span>
+                <span>Analytics</span>
+                <span>Enterprise</span>
+              </div>
+              <button id="mock-web-nav-btn" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition">Get Started</button>
+            </div>
+
+            <!-- Mock Hero -->
+            <div class="py-7 space-y-4 max-w-lg">
+              <span id="mock-web-badge" class="inline-block px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider">Version 4.0 Release</span>
+              <h3 class="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight">
+                Precision infrastructure for modern digital products.
+              </h3>
+              <p class="text-xs sm:text-sm opacity-80 leading-relaxed">
+                Deploy global workflows in seconds with real-time observability, automated compliance, and enterprise-grade security.
+              </p>
+              <div class="pt-2 flex flex-wrap items-center gap-3">
+                <button id="mock-web-cta-primary" class="px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm">Start Free Trial</button>
+                <button id="mock-web-cta-secondary" class="px-4 py-2.5 rounded-xl text-xs font-bold border border-current/25">Book Demo</button>
+              </div>
+            </div>
+
+            <!-- Mock Feature Strip -->
+            <div class="grid grid-cols-3 gap-3 pt-4 border-t border-current/10">
+              <div id="mock-web-card-1" class="p-3 rounded-xl">
+                <div class="text-xs font-bold">99.99% Uptime</div>
+                <div class="text-[11px] opacity-75 mt-0.5">Global edge nodes</div>
+              </div>
+              <div id="mock-web-card-2" class="p-3 rounded-xl">
+                <div class="text-xs font-bold">Sub-12ms Latency</div>
+                <div class="text-[11px] opacity-75 mt-0.5">Real-time sync</div>
+              </div>
+              <div id="mock-web-card-3" class="p-3 rounded-xl">
+                <div class="text-xs font-bold">SOC2 Type II</div>
+                <div class="text-[11px] opacity-75 mt-0.5">Zero-trust vault</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- B. UI Buttons, Badges & Card Components (5 cols) -->
+        <div class="lg:col-span-5 bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs flex flex-col">
+          <div class="px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+            <span class="text-[11px] font-semibold text-slate-500">Buttons, Cards & UI Tokens</span>
+            <span class="text-[11px] font-mono-code text-slate-400">Component Kit</span>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between space-y-5 bg-slate-50/40">
+            <!-- Buttons Row -->
+            <div class="space-y-2">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Interactive Buttons</span>
+              <div class="flex flex-wrap gap-2.5">
+                <button id="mock-btn-1" class="px-4 py-2 rounded-xl text-xs font-bold shadow-xs">Primary Action</button>
+                <button id="mock-btn-2" class="px-4 py-2 rounded-xl text-xs font-bold shadow-xs">Secondary</button>
+                <button id="mock-btn-3" class="px-4 py-2 rounded-xl text-xs font-bold border-2 bg-white">Accent Outline</button>
+              </div>
+            </div>
+
+            <!-- Status Badges -->
+            <div class="space-y-2">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Pills & Tags</span>
+              <div class="flex flex-wrap gap-2">
+                <span id="mock-tag-1" class="px-3 py-1 rounded-full text-xs font-bold">Design System</span>
+                <span id="mock-tag-2" class="px-3 py-1 rounded-full text-xs font-bold">Production</span>
+                <span id="mock-tag-3" class="px-3 py-1 rounded-full text-xs font-bold">v2.4 Stable</span>
+              </div>
+            </div>
+
+            <!-- Metric Card Component -->
+            <div id="mock-ui-card" class="p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-3 transition-colors duration-300">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold opacity-80">Monthly Active Teams</span>
+                <span id="mock-card-pill" class="px-2 py-0.5 rounded text-[11px] font-bold">+24.8%</span>
+              </div>
+              <div class="text-2xl font-extrabold font-mono-code">148,920</div>
+              <!-- Mini Bar Chart using Palette Colors -->
+              <div class="flex items-end gap-1.5 h-10 pt-1">
+                <div id="mock-bar-1" class="flex-1 rounded-t h-5"></div>
+                <div id="mock-bar-2" class="flex-1 rounded-t h-7"></div>
+                <div id="mock-bar-3" class="flex-1 rounded-t h-6"></div>
+                <div id="mock-bar-4" class="flex-1 rounded-t h-9"></div>
+                <div id="mock-bar-5" class="flex-1 rounded-t h-10"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- C. Typography Hierarchy Specimen (4 cols) -->
+        <div class="lg:col-span-4 bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs flex flex-col">
+          <div class="px-4 py-2.5 bg-slate-50 border-b border-slate-200">
+            <span class="text-[11px] font-semibold text-slate-500">Editorial Typography Preview</span>
+          </div>
+          <div id="mock-typo-card" class="p-6 flex-1 flex flex-col justify-between space-y-4 transition-colors duration-300">
+            <div class="space-y-2.5">
+              <div id="mock-typo-kicker" class="text-[11px] font-extrabold uppercase tracking-widest">Issue 14 • Swiss Grid</div>
+              <h3 class="text-2xl font-extrabold tracking-tight leading-snug">Form Follows Color & Proportion</h3>
+              <p class="text-xs leading-relaxed opacity-85">
+                Harmonious chromatic balance anchors visual storytelling across editorial layouts, brand guidelines, and digital interfaces.
+              </p>
+            </div>
+            <div class="pt-3 border-t border-current/15 flex items-center justify-between text-[11px] font-mono-code">
+              <span>Aa Bb Cc • Inter 700</span>
+              <span id="mock-typo-accent" class="font-bold underline">Read Essay →</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- D. Social Media Post Graphic (4 cols) -->
+        <div class="lg:col-span-4 bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs flex flex-col">
+          <div class="px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+            <span class="text-[11px] font-semibold text-slate-500">Social Media Promo Card</span>
+            <span class="text-[11px] font-mono-code text-slate-400">1:1 Square</span>
+          </div>
+          <div class="p-5 flex-1 flex items-center justify-center bg-slate-100/70">
+            <div id="mock-social-post" class="w-full max-w-[270px] aspect-square rounded-2xl p-5 flex flex-col justify-between shadow-sm relative overflow-hidden transition-colors duration-300">
+              <!-- Decorative geometric circles -->
+              <div id="mock-social-circle-1" class="w-24 h-24 rounded-full absolute -right-6 -top-6 opacity-85"></div>
+              <div id="mock-social-circle-2" class="w-16 h-16 rounded-full absolute right-10 bottom-10 opacity-75"></div>
+
+              <div class="relative z-10">
+                <span id="mock-social-badge" class="px-2.5 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-wider">Design Summit</span>
+              </div>
+              <div class="relative z-10 space-y-1.5">
+                <h4 class="text-xl font-extrabold leading-tight tracking-tight">Future of Digital Craft</h4>
+                <p class="text-[11px] opacity-85">Live Keynote • Oct 24</p>
+              </div>
+              <div class="relative z-10 flex items-center justify-between pt-2 border-t border-current/15 text-[10px] font-bold">
+                <span>@chromastudio</span>
+                <span>Swipe →</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- E. Modernist Graphic Design Poster Preview (4 cols) -->
+        <div class="lg:col-span-4 bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs flex flex-col">
+          <div class="px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+            <span class="text-[11px] font-semibold text-slate-500">Print & Exhibition Poster</span>
+            <span class="text-[11px] font-mono-code text-slate-400">A2 Print</span>
+          </div>
+          <div class="p-5 flex-1 flex items-center justify-center bg-slate-100/70">
+            <div id="mock-poster" class="w-full max-w-[240px] aspect-[3/4] rounded-xl p-5 flex flex-col justify-between shadow-sm transition-colors duration-300">
+              <div class="flex items-start justify-between">
+                <span class="text-[10px] font-mono-code font-bold uppercase tracking-widest">Bauhaus / 26</span>
+                <span class="text-[10px] font-mono-code font-bold">Zürich</span>
+              </div>
+
+              <!-- Geometric Bauhaus Blocks -->
+              <div class="grid grid-cols-2 gap-2 my-3">
+                <div id="mock-poster-shape-1" class="h-16 rounded-tl-full"></div>
+                <div id="mock-poster-shape-2" class="h-16 rounded-full"></div>
+                <div id="mock-poster-shape-3" class="h-16 rounded-lg"></div>
+                <div id="mock-poster-shape-4" class="h-16 rounded-br-full"></div>
+              </div>
+
+              <div>
+                <div class="text-lg font-black tracking-tighter leading-none uppercase">Chromatic</div>
+                <div class="text-lg font-black tracking-tighter leading-none uppercase opacity-80">Architecture</div>
+                <div class="text-[10px] font-mono-code mt-2 opacity-75">Kunsthalle Exhibition Hall B</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- 6. SAVED PALETTES LIBRARY (LOCALSTORAGE)                            -->
+    <!-- =================================================================== -->
+    <section id="saved-section" class="scroll-mt-24 bg-slate-50/70 border border-slate-200 rounded-2xl p-5 sm:p-7 space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-blue-700">Local Collection</span>
+          <h2 class="text-lg sm:text-xl font-bold text-slate-900 mt-0.5">Saved Palettes Library</h2>
+          <p class="text-xs sm:text-sm text-slate-500">Your palettes are saved automatically in your browser. Rename, restore, or export anytime.</p>
+        </div>
+
+        <button onclick="openSaveModal()" class="self-start sm:self-auto inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold transition cursor-pointer">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>Save Current Palette</span>
+        </button>
+      </div>
+
+      <div id="saved-palettes-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Saved palettes rendered from localStorage -->
+      </div>
+    </section>
+
+    <section id="color-palette-guide" class="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-5 sm:p-8 space-y-5" aria-labelledby="guide-title">
+      <div class="max-w-4xl space-y-2">
+        <p class="text-xs font-bold uppercase tracking-wider text-blue-700">Color palette guide</p>
+        <h2 id="guide-title" class="text-xl sm:text-2xl font-bold text-slate-900">Create Better Color Palettes for Every Design Project</h2>
+        <p class="text-sm leading-7 text-slate-600">A well-planned color palette helps create a consistent visual identity. Use the generator to explore combinations, keep favorite colors locked while generating alternatives, and refine a palette before using it in a website, app interface, brand identity, social media graphic, or print layout.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm leading-7">
+        <div><h3 class="font-bold text-slate-900 mb-1">Color formats: HEX, RGB, CMYK and HSL</h3><p class="text-slate-600">HEX is commonly used in web design. RGB describes red, green and blue light values for screens. CMYK represents cyan, magenta, yellow and black percentages used in print workflows. HSL describes hue, saturation and lightness. Copy the format that fits your workflow, and confirm print colors with the printer's required color profile because screen previews cannot guarantee an exact printed match.</p></div>
+        <div><h3 class="font-bold text-slate-900 mb-1">Explore color harmony and variations</h3><p class="text-slate-600">Color harmony patterns such as complementary, analogous and triadic combinations can help you explore relationships between colors. Shades add black, tints mix with white, and gradients create smooth transitions between palette colors.</p></div>
+        <div><h3 class="font-bold text-slate-900 mb-1">Check readability and accessibility</h3><p class="text-slate-600">Use the contrast checker to compare foreground and background colors. For accessible interfaces, review text contrast against WCAG guidance and test the final colors in the actual design context.</p></div>
+        <div><h3 class="font-bold text-slate-900 mb-1">Preview, save and export your palette</h3><p class="text-slate-600">Preview colors in the built-in design mockups, save palettes in your browser, and export palette information for use in your design workflow. Saved palettes are stored locally in the browser on the device you use.</p></div>
+      </div>
+      <div class="border-t border-slate-200 pt-5 space-y-3">
+        <h2 class="text-lg font-bold text-slate-900">Frequently Asked Questions</h2>
+        <div><h3 class="font-semibold text-slate-900">Is ChromaStudio Pro free to use?</h3><p class="text-sm text-slate-600 mt-1">Yes. The color palette tools on this page are available to use online without creating an account.</p></div>
+        <div><h3 class="font-semibold text-slate-900">Which color formats can I get?</h3><p class="text-sm text-slate-600 mt-1">The studio provides HEX, RGB, CMYK and HSL color values for working across digital and print design workflows.</p></div>
+        <div><h3 class="font-semibold text-slate-900">Can I use the palettes for print design?</h3><p class="text-sm text-slate-600 mt-1">You can use the CMYK values as a starting point for print layouts. Final output depends on the printer, paper, ink and color profile, so request a proof when color accuracy matters.</p></div>
+        <div><h3 class="font-semibold text-slate-900">Where are my saved palettes stored?</h3><p class="text-sm text-slate-600 mt-1">Saved palettes are stored in your browser's local storage on the current device and browser. They are not automatically synchronized between devices.</p></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- CLEAN PROFESSIONAL FOOTER                                             -->
+  <!-- ===================================================================== -->
+  <footer class="border-t border-slate-200 bg-white mt-16">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-slate-900">ChromaStudio Pro</span>
+        <span>•</span>
+        <span>Built for Graphic, UI/UX, Web & Print Designers</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span>Press <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded font-mono text-slate-700">Space</kbd> to generate</span>
+        <button onclick="openExportModal()" class="font-semibold text-blue-700 hover:underline cursor-pointer">Export Suite</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 1: SAVE PALETTE DIALOG                                          -->
+  <!-- ===================================================================== -->
+  <div id="save-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/50 backdrop-blur-xs p-4">
+    <div class="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 shadow-xl space-y-5">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-bold text-slate-900">Save Color Palette</h3>
+        <button onclick="closeSaveModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <!-- Mini Preview Strip -->
+      <div id="save-modal-strip" class="h-12 w-full rounded-xl overflow-hidden flex border border-slate-200"></div>
+
+      <div>
+        <label for="save-palette-name" class="block text-xs font-bold text-slate-700 mb-1.5">Palette Name</label>
+        <input type="text" id="save-palette-name" placeholder="e.g. Nordic Fintech Brand System"
+          class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-medium text-slate-900 focus:outline-none focus:border-blue-700" />
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button onclick="closeSaveModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer">Cancel</button>
+        <button onclick="confirmSavePalette()" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold cursor-pointer">Save to Library</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 2: EXPORT & DOWNLOAD SUITE                                      -->
+  <!-- ===================================================================== -->
+  <div id="export-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/50 backdrop-blur-xs p-4">
+    <div class="bg-white border border-slate-200 rounded-2xl max-w-2xl w-full p-6 shadow-xl space-y-5 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900">Export & Download Palette</h3>
+          <p class="text-xs text-slate-500">Download production-ready assets for code, web, print, and client presentations.</p>
+        </div>
+        <button onclick="closeExportModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <!-- Visual Download Cards -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <button onclick="exportPNG()" class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border border-slate-200 hover:border-blue-700 hover:bg-blue-50/40 transition cursor-pointer group">
+          <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center group-hover:bg-blue-700 transition">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </div>
+          <span class="text-xs font-bold text-slate-900">PNG Image</span>
+          <span class="text-[10px] text-slate-500">High-Res Spec</span>
+        </button>
+
+        <button onclick="exportPDF()" class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border border-slate-200 hover:border-blue-700 hover:bg-blue-50/40 transition cursor-pointer group">
+          <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center group-hover:bg-blue-700 transition">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <span class="text-xs font-bold text-slate-900">PDF Sheet</span>
+          <span class="text-[10px] text-slate-500">Print Swatch Doc</span>
+        </button>
+
+        <button onclick="downloadCSSFile()" class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border border-slate-200 hover:border-blue-700 hover:bg-blue-50/40 transition cursor-pointer group">
+          <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center group-hover:bg-blue-700 transition">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <span class="text-xs font-bold text-slate-900">CSS File</span>
+          <span class="text-[10px] text-slate-500">:root Variables</span>
+        </button>
+
+        <button onclick="downloadJSONFile()" class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border border-slate-200 hover:border-blue-700 hover:bg-blue-50/40 transition cursor-pointer group">
+          <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center group-hover:bg-blue-700 transition">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          </div>
+          <span class="text-xs font-bold text-slate-900">JSON Tokens</span>
+          <span class="text-[10px] text-slate-500">Design Data</span>
+        </button>
+      </div>
+
+      <!-- Code Tabs (CSS Variables / JSON / HEX Array) -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
+            <button id="tab-export-css" onclick="switchExportCodeTab('css')" class="px-3 py-1 rounded-lg text-xs font-bold bg-white text-slate-900 shadow-2xs cursor-pointer">CSS Variables</button>
+            <button id="tab-export-json" onclick="switchExportCodeTab('json')" class="px-3 py-1 rounded-lg text-xs font-bold text-slate-600 cursor-pointer">JSON</button>
+            <button id="tab-export-text" onclick="switchExportCodeTab('text')" class="px-3 py-1 rounded-lg text-xs font-bold text-slate-600 cursor-pointer">Text Spec</button>
+            <button id="tab-export-hex" onclick="switchExportCodeTab('hex')" class="px-3 py-1 rounded-lg text-xs font-bold text-slate-600 cursor-pointer">HEX List</button>
+          </div>
+
+          <button onclick="copyExportCode()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold cursor-pointer">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <span>Copy Code</span>
+          </button>
+        </div>
+
+        <pre id="export-code-preview" class="bg-slate-950 text-slate-100 font-mono-code text-xs p-4 rounded-xl overflow-x-auto max-h-56 leading-relaxed"></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- TOAST NOTIFICATION FEEDBACK                                           -->
+  <!-- ===================================================================== -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- ===================================================================== -->
+  <!-- JAVASCRIPT ENGINE: COLOR MATH, STATE, UI RENDERING & EXPORTS          -->
+  <!-- ===================================================================== -->
+  <script>
+    // =========================================================================
+    // 1. STATE MANAGEMENT
+    // =========================================================================
+    const STORAGE_KEY = 'chromastudio_pro_saved_palettes_v1';
+
+    let palette = [
+      { id: uid(), hex: '#0F172A', locked: false },
+      { id: uid(), hex: '#1D4ED8', locked: false },
+      { id: uid(), hex: '#38BDF8', locked: false },
+      { id: uid(), hex: '#E2E8F0', locked: false },
+      { id: uid(), hex: '#F8FAFC', locked: false }
+    ];
+
+    let harmonyMode = 'complementary';
+    let harmonyBaseHex = '#1D4ED8';
+    let generatedHarmony = [];
+
+    let inspectedShadeHex = '#1D4ED8';
+    let contrastFG = '#0F172A';
+    let contrastBG = '#FFFFFF';
+    let mockupRoleOffset = 0;
+    let currentExportTab = 'css';
+    let draggedSwatchIndex = null;
+
+    function uid() {
+      return 'c_' + Math.random().toString(36).substring(2, 9);
+    }
+
+    // =========================================================================
+    // 2. COLOR CONVERSION & ACCESSIBILITY MATH UTILITIES
+    // =========================================================================
+    function normalizeHex(hex) {
+      if (!hex) return null;
+      let clean = hex.trim().replace(/^#/, '');
+      if (/^[0-9A-Fa-f]{3}$/.test(clean)) {
+        clean = clean.split('').map(ch => ch + ch).join('');
+      }
+      if (/^[0-9A-Fa-f]{6}$/.test(clean)) {
+        return '#' + clean.toUpperCase();
+      }
+      return null;
+    }
+
+    function hexToRgb(hex) {
+      const norm = normalizeHex(hex) || '#000000';
+      const num = parseInt(norm.slice(1), 16);
+      return {
+        r: (num >> 16) & 255,
+        g: (num >> 8) & 255,
+        b: num & 255
+      };
+    }
+
+    function rgbToHex(r, g, b) {
+      const clamp = v => Math.max(0, Math.min(255, Math.round(v)));
+      return '#' + [clamp(r), clamp(g), clamp(b)]
+        .map(x => x.toString(16).padStart(2, '0'))
+        .join('')
+        .toUpperCase();
+    }
+
+    function rgbToHsl(r, g, b) {
+      r /= 255; g /= 255; b /= 255;
+      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+      let h = 0, s = 0, l = (max + min) / 2;
+
+      if (max !== min) {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+          case g: h = (b - r) / d + 2; break;
+          case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+      }
+      return {
+        h: Math.round(h * 360),
+        s: Math.round(s * 100),
+        l: Math.round(l * 100)
+      };
+    }
+
+    function hslToRgb(h, s, l) {
+      h = ((h % 360) + 360) % 360;
+      s = Math.max(0, Math.min(100, s)) / 100;
+      l = Math.max(0, Math.min(100, l)) / 100;
+
+      const c = (1 - Math.abs(2 * l - 1)) * s;
+      const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+      const m = l - c / 2;
+      let r1 = 0, g1 = 0, b1 = 0;
+
+      if (h < 60) { r1 = c; g1 = x; b1 = 0; }
+      else if (h < 120) { r1 = x; g1 = c; b1 = 0; }
+      else if (h < 180) { r1 = 0; g1 = c; b1 = x; }
+      else if (h < 240) { r1 = 0; g1 = x; b1 = c; }
+      else if (h < 300) { r1 = x; g1 = 0; b1 = c; }
+      else { r1 = c; g1 = 0; b1 = x; }
+
+      return {
+        r: Math.round((r1 + m) * 255),
+        g: Math.round((g1 + m) * 255),
+        b: Math.round((b1 + m) * 255)
+      };
+    }
+
+    function hslToHex(h, s, l) {
+      const { r, g, b } = hslToRgb(h, s, l);
+      return rgbToHex(r, g, b);
+    }
+
+    // Standard mathematical RGB (0-255) to CMYK (0-100%) conversion
+    function rgbToCmyk(r, g, b) {
+      const rn = Math.max(0, Math.min(255, r)) / 255;
+      const gn = Math.max(0, Math.min(255, g)) / 255;
+      const bn = Math.max(0, Math.min(255, b)) / 255;
+
+      const k = 1 - Math.max(rn, gn, bn);
+      if (k >= 1 || Math.abs(1 - k) < 1e-6) {
+        return { c: 0, m: 0, y: 0, k: 100 };
+      }
+
+      const c = (1 - rn - k) / (1 - k);
+      const m = (1 - gn - k) / (1 - k);
+      const y = (1 - bn - k) / (1 - k);
+
+      return {
+        c: Math.round(c * 100),
+        m: Math.round(m * 100),
+        y: Math.round(y * 100),
+        k: Math.round(k * 100)
+      };
+    }
+
+    function hexToCmyk(hex) {
+      const { r, g, b } = hexToRgb(hex);
